@@ -4,6 +4,28 @@ unshift!(LOAD_PATH, joinpath(dirname(@__FILE__), "..", "src"))
 import Kshramt
 
 let
+    @test Kshramt.one_others([]) == []
+    @test Kshramt.one_others([1]) == [(1, [])]
+    @test Kshramt.one_others([1, 2]) == [(1, [2]), (2, [1])]
+    @test Kshramt.one_others([1, 2, 3]) == [(1, [2, 3]), (2, [1, 3]), (3, [1, 2])]
+    @test Kshramt.one_others([1, 2, 3, 4]) == [(1, [2, 3, 4]), (2, [1, 3, 4]), (3, [1, 2, 4]), (4, [1, 2, 3])]
+end
+
+let
+    @test Kshramt.count_by(typeof, {1, 2.0, 3}) == {
+                                                    Float64 => 1,
+                                                    Int64 => 2,
+                                                    }
+end
+
+let
+    @test Kshramt.group_by(typeof, {1, 2.0, 3}) == {
+                                                    Float64 => [2.0],
+                                                    Int64 => [1, 3],
+                                                    }
+end
+
+let
     @test_throws Kshramt.each_cons([1, 2, 3, 4], 0)
     @test Kshramt.each_cons([1, 2, 3, 4], 1) == [[i] for i in [1, 2, 3, 4]]
     @test Kshramt.each_cons([1, 2, :a, 4], 1) == [[i] for i in [1, 2, :a, 4]]
