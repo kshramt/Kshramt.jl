@@ -1,16 +1,8 @@
 module Kshramt
 
-function one_others(xs)
-    [(xs[i], [xs[1:i-1], xs[i+1:end]]) for i in 1:length(xs)]
-end
+one_others(xs) = [(xs[i], [xs[1:i-1], xs[i+1:end]]) for i in 1:length(xs)]
 
-function count_by(f, xs)
-    ret = Dict{Any, Integer}()
-    for (k, vs) in group_by(f, xs)
-        ret[k] = length(vs)
-    end
-    ret
-end
+count_by(f, xs) = [k => length(vs) for (k, vs) in group_by(f, xs)]
 
 function group_by(f, xs)
     ret = Dict()
@@ -25,10 +17,10 @@ function group_by(f, xs)
     ret
 end
 
-function each_cons(xs, n::Int)
+function each_cons(xs, n)
     @assert n >= 1
     m = n - 1
-    [xs[i:i+m] for i in 1:length(xs) - m]
+    [xs[i:i+m] for i in 1:(length(xs) - m)]
 end
 
 end
