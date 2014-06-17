@@ -4,6 +4,15 @@ unshift!(LOAD_PATH, joinpath(dirname(@__FILE__), "..", "src"))
 import Kshramt
 
 let
+    # `Kshramt.Error` is thrown in a macro expansion phase.
+    # Therefore, `@test_throws Kshramt.Error Kshramt.@|>(1, 1)` is not enough.
+    @test_throws Kshramt.Error eval(:(Kshramt.@|>(1, 1)))
+
+    inc(x) = x + 1
+    @test Kshramt.@|>(1, inc, -(1)) == 1
+end
+
+let
     @test Kshramt.one_others([]) == []
     @test Kshramt.one_others([1]) == [(1, [])]
     @test Kshramt.one_others([1, 2]) == [(1, [2]), (2, [1])]

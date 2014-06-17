@@ -1,5 +1,35 @@
 module Kshramt
 
+
+type Error <: Exception
+    msg::String
+end
+error(s::String) = throw(Error(s))
+error(s...) = error(string(s...))
+Base.showerror(io::IO, e::Error) = print(io, e.msg)
+
+
+macro |>(v, fs...)
+    esc(_pipe(v, fs))
+end
+function _pipe(v, fs)
+    if length(fs) <= 0
+        v
+    else
+        f = fs[1]
+        _v = if isa(f, Expr)
+            @assert f.head == :call
+            insert!(f.args, 2, v)
+            f
+        elseif isa(f, Symbol)
+            :($f($v))
+        else
+            error("Unsupported type: $f::$(typeof(f))")
+        end
+        _pipe(_v, fs[2:end])
+    end
+end
+
 one_others(xs) = [(xs[i], [xs[1:i-1], xs[i+1:end]]) for i in 1:length(xs)]
 
 count_by(f, xs) = [k => length(vs) for (k, vs) in group_by(f, xs)]
