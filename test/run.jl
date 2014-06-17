@@ -26,7 +26,7 @@ let
 end
 
 let
-    @test_throws Kshramt.each_cons([1, 2, 3, 4], 0)
+    @test_throws ErrorException Kshramt.each_cons([1, 2, 3, 4], 0)
     @test Kshramt.each_cons([1, 2, 3, 4], 1) == [[i] for i in [1, 2, 3, 4]]
     @test Kshramt.each_cons([1, 2, :a, 4], 1) == [[i] for i in [1, 2, :a, 4]]
     @test Kshramt.each_cons([1, 2, 3, 4], 2) == [[i, j] for (i, j) in [(1, 2), (2, 3), (3, 4)]]
