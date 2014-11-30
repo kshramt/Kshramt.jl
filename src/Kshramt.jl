@@ -14,7 +14,7 @@ function make_fixed_format_parser(fields)
     _fields = map(fields) do field
         name, len, fn = field::(Any, Integer, Function)
         n += len
-        :($(Meta.quot(name)) => ($fn)(s[$(n - len):$(n-1)]))
+        :($(Meta.quot(name)) => ($fn)(s[$(n-len):$(n-1)]))
     end
     ex = :((s)->(@assert length(s) >= $(n-1); Dict()))
     append!(ex.args[2].args[2].args[2].args, [_fields...])
