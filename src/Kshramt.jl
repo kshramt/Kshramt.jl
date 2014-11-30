@@ -9,7 +9,7 @@ error(s...) = error(string(s...))
 Base.showerror(io::IO, e::Error) = print(io, e.msg)
 
 
-function make_fixed_format_parser(fields)
+function make_parse_fixed_width(fields)
     n = 1
     _fields = map(fields) do field
         name, len, fn = field::(Any, Integer, Function)

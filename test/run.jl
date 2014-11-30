@@ -14,7 +14,7 @@ end
 
 
 let
-    parse = Kshramt.make_fixed_format_parser(((:a, 2, int32), ("a", 3, int64)))
+    parse = Kshramt.make_parse_fixed_width(((:a, 2, int32), ("a", 3, int64)))
     d = parse("12345")
     @test d[:a] == 12
     @test typeof(d[:a]) == Int32
@@ -27,8 +27,8 @@ let
     @test typeof(d["a"]) == Int64
 
     @test_throws ErrorException parse("1234")
-    @test_throws TypeError Kshramt.make_fixed_format_parser(((:a, 2.0, int32), ("a", 3, int64)))
-    @test_throws TypeError Kshramt.make_fixed_format_parser(((:a, 2, int32), ("a", 3, 3)))
+    @test_throws TypeError Kshramt.make_parse_fixed_width(((:a, 2.0, int32), ("a", 3, int64)))
+    @test_throws TypeError Kshramt.make_parse_fixed_width(((:a, 2, int32), ("a", 3, 3)))
 end
 
 
