@@ -36,16 +36,16 @@ end
 
 let
     @test Kshramt.count_by(typeof, Any[1, 2.0, 3]) == Dict(
-                                                        Float64 => 1,
-                                                        Int64 => 2,
-                                                        )
+                                                           Float64 => 1,
+                                                           Int64 => 2,
+                                                           )
 end
 
 let
     @test Kshramt.group_by(typeof, Any[1, 2.0, 3]) == Dict(
-                                                        Float64 => [2.0],
-                                                        Int64 => [1, 3],
-                                                    )
+                                                           Float64 => [2.0],
+                                                           Int64 => [1, 3],
+                                                           )
 end
 
 let
