@@ -9,6 +9,19 @@ error(s...) = error(string(s...))
 Base.showerror(io::IO, e::Error) = print(io, e.msg)
 
 
+function make_fixed_format_parser(fields)
+    n = 1
+    _fields = map(fields) do field
+        name, len, fn = field::(Any, Integer, Function)
+        n += len
+        :($(Meta.quot(name)) => ($fn)(s[$(n - len):$(n-1)]))
+    end
+    ex = :((s)->(@assert length(s) >= $(n-1); Dict()))
+    append!(ex.args[2].args[2].args[2].args, [_fields...])
+    eval(ex)
+end
+
+
 macro |>(v, fs...)
     esc(_pipe(v, fs))
 end

@@ -12,6 +12,20 @@ let
     @test Kshramt.@|>(1, inc, -(1)) == 1
 end
 
+
+let
+    parse = Kshramt.make_fixed_format_parser(((:a, 2, int32), ("a", 3, int64)))
+    d = parse("123456")
+    @test d[:a] == 12
+    @test typeof(d[:a]) == Int32
+    @test d["a"] == 345
+    @test typeof(d["a"]) == Int64
+    @test_throws ErrorException parse("1234")
+    @test_throws TypeError Kshramt.make_fixed_format_parser(((:a, 2.0, int32), ("a", 3, int64)))
+    @test_throws TypeError Kshramt.make_fixed_format_parser(((:a, 2, int32), ("a", 3, 3)))
+end
+
+
 let
     @test Kshramt.one_others([]) == []
     @test Kshramt.one_others([1]) == [(1, [])]
