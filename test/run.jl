@@ -29,6 +29,12 @@ let
     @test_throws ErrorException parse("1234")
     @test_throws TypeError Kshramt.make_parse_fixed_width(((:a, 2.0, int32), ("a", 3, int64)))
     @test_throws TypeError Kshramt.make_parse_fixed_width(((:a, 2, int32), ("a", 3, 3)))
+
+    parse = Kshramt.make_parse_fixed_width(((:a, 1, int32), 2, (3, 3, symbol)))
+    d = parse("123456")
+    @test d[:a] == 1
+    @test typeof(d[:a]) == Int32
+    @test d[3] == symbol("456")
 end
 
 

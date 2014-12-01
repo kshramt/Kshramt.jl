@@ -11,13 +11,18 @@ Base.showerror(io::IO, e::Error) = print(io, e.msg)
 
 function make_parse_fixed_width(fields)
     n = 1
-    _fields = map(fields) do field
-        name, len, fn = field::(Any, Integer, Function)
-        n += len
-        :($(Meta.quot(name)) => ($fn)(s[$(n-len):$(n-1)]))
+    _fields = []
+    for field in fields
+        if isa(field, Integer)
+            n += field
+        else
+            name, len, fn = field::(Any, Integer, Function)
+            n += len
+            push!(_fields, :($(Meta.quot(name)) => ($fn)(s[$(n-len):$(n-1)])))
+        end
     end
     ex = :((s)->(@assert length(s) >= $(n-1); Dict()))
-    append!(ex.args[2].args[2].args[2].args, [_fields...])
+    append!(ex.args[2].args[2].args[2].args, _fields)
     eval(ex)
 end
 
