@@ -6,10 +6,12 @@ import Kshramt
 let
     # `Kshramt.Error` is thrown in a macro expansion phase.
     # Therefore, `@test_throws Kshramt.Error Kshramt.@|>(1, 1)` is not enough.
-    @test_throws Kshramt.Error eval(:(Kshramt.@|>(1, 1)))
+    @test_throws Kshramt.Error eval(:(Kshramt.@|> 1 1))
 
     inc(x) = x + 1
-    @test Kshramt.@|>(1, inc, -(1)) == 1
+    @test (Kshramt.@|> 1 inc -(1)) == 1
+    x = Kshramt.@|> 1 inc inc
+    @test x == 3
 end
 
 
@@ -31,10 +33,7 @@ let
     @test_throws TypeError Kshramt.make_parse_fixed_width(((:a, 2, int32), ("a", 3, 3)))
 
     parse = Kshramt.make_parse_fixed_width(((:a, 1, int32), 2, (3, 3, symbol)))
-    d = parse("123456")
-    @test d[:a] == 1
-    @test typeof(d[:a]) == Int32
-    @test d[3] == symbol("456")
+    @test parse("123456") == Dict(:a => int32(1), 3 => symbol("456"))
 end
 
 
