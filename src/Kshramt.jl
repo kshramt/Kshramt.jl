@@ -9,6 +9,43 @@ error(s...) = error(string(s...))
 Base.showerror(io::IO, e::Error) = print(io, e.msg)
 
 
+function dump_vtk_structured_points{T, U}(io::IO, vs::AbstractArray{T, 3}, dx::U, dy::U, dz::U, x0::U, y0::U, z0::U)
+    @assert dx > zero(U)
+    @assert dy > zero(U)
+    @assert dz > zero(U)
+    nx, ny, nz = size(vs)
+    @assert nx >= 1
+    @assert ny >= 1
+    @assert nz >= 1
+    println(io, """# vtk DataFile Version 3.0
+voxel
+ASCII
+DATASET STRUCTURED_POINTS
+DIMENSIONS $nx $ny $nz
+ORIGIN $x0 $y0 $z0
+SPACING $dx $dy $dz
+POINT_DATA $(length(vs))
+SCALARS v $(_vtk_type(first(vs)))
+LOOKUP_TABLE default""")
+    for v in vs
+        print(io, v, '\n')
+    end
+end
+dump_vtk_structured_points{T, U}(io::IO, vs::AbstractArray{T, 3}, dx::U, dy::U, dz::U) = dump_vtk_structured_points(io, vs, dx, dy, dz, zero(U), zero(U), zero(U))
+dump_vtk_structured_points{T}(io::IO, vs::AbstractArray{T, 3}) = dump_vtk_structured_points(io, vs, 1e0, 1e0, 1e0)
+dump_vtk_structured_points{T}(vs::AbstractArray{T, 3}) = dump_vtk_structured_points(STDOUT, vs)
+
+
+_vtk_type(::Float16) = "FLOAT"
+_vtk_type(::Float32) = "FLOAT"
+_vtk_type(::Float64) = "FLOAT"
+_vtk_type(::Int8) = "INTEGER"
+_vtk_type(::Int16) = "INTEGER"
+_vtk_type(::Int32) = "INTEGER"
+_vtk_type(::Int64) = "INTEGER"
+_vtk_type(::Int128) = "INTEGER"
+
+
 function make_parse_fixed_width(fields)
     n = 1
     _fields = []
