@@ -1,14 +1,6 @@
 module Kshramt
 
 
-type Error <: Exception
-    msg::String
-end
-error(s::String) = throw(Error(s))
-error(s...) = error(string(s...))
-Base.showerror(io::IO, e::Error) = print(io, e.msg)
-
-
 function dump_vtk_structured_points{T, U}(io::IO, vs::AbstractArray{T, 3}, dx::U, dy::U, dz::U, x0::U, y0::U, z0::U)
     @assert dx > zero(U)
     @assert dy > zero(U)
@@ -79,7 +71,7 @@ function _pipe(v, fs)
         elseif isa(f, Symbol)
             :($f($v))
         else
-            error("Unsupported type: $f::$(typeof(f))")
+            error("$f::$(typeof(f)) is neither `Expr` nor `Symbol`")
         end
         _pipe(_v, fs[2:end])
     end

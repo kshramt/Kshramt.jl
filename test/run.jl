@@ -4,9 +4,9 @@ unshift!(LOAD_PATH, joinpath(dirname(@__FILE__), "..", "src"))
 import Kshramt
 
 let
-    # `Kshramt.Error` is thrown in a macro expansion phase.
-    # Therefore, `@test_throws Kshramt.Error Kshramt.@|>(1, 1)` is not enough.
-    @test_throws Kshramt.Error eval(:(Kshramt.@|> 1 1))
+    # `ErrorException` is thrown in a macro expansion phase.
+    # Therefore, `@test_throws ErrorException Kshramt.@|>(1, 1)` does not work.
+    @test_throws ErrorException eval(:(Kshramt.@|> 1 1))
 
     inc(x) = x + 1
     @test (Kshramt.@|> 1 inc -(1)) == 1
