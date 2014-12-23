@@ -25,7 +25,7 @@ DIMENSIONS $nx $ny $nz
 ORIGIN $x0 $y0 $z0
 SPACING $dx $dy $dz
 POINT_DATA $(length(vs))
-SCALARS v $(_vtk_type(first(vs)))
+SCALARS v $(_vtk_type(T))
 LOOKUP_TABLE default""")
     for v in vs
         print(io, v, '\n')
@@ -36,14 +36,14 @@ dump_vtk_structured_points{T}(io::IO, vs::AbstractArray{T, 3}) = dump_vtk_struct
 dump_vtk_structured_points{T}(vs::AbstractArray{T, 3}) = dump_vtk_structured_points(STDOUT, vs)
 
 
-_vtk_type(::Float16) = "FLOAT"
-_vtk_type(::Float32) = "FLOAT"
-_vtk_type(::Float64) = "FLOAT"
-_vtk_type(::Int8) = "INTEGER"
-_vtk_type(::Int16) = "INTEGER"
-_vtk_type(::Int32) = "INTEGER"
-_vtk_type(::Int64) = "INTEGER"
-_vtk_type(::Int128) = "INTEGER"
+_vtk_type(::Type{Float16}) = "FLOAT"
+_vtk_type(::Type{Float32}) = "FLOAT"
+_vtk_type(::Type{Float64}) = "FLOAT"
+_vtk_type(::Type{Int8}) = "INTEGER"
+_vtk_type(::Type{Int16}) = "INTEGER"
+_vtk_type(::Type{Int32}) = "INTEGER"
+_vtk_type(::Type{Int64}) = "INTEGER"
+_vtk_type(::Type{Int128}) = "INTEGER"
 
 
 function make_parse_fixed_width(fields)
