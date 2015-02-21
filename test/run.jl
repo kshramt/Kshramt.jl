@@ -28,7 +28,7 @@ let
     @test d["a"] == 345
     @test typeof(d["a"]) == Int64
 
-    @test_throws ErrorException parse("1234")
+    @test_throws AssertionError parse("1234")
     @test_throws TypeError Kshramt.make_parse_fixed_width(((:a, 2.0, int32), ("a", 3, int64)))
     @test_throws TypeError Kshramt.make_parse_fixed_width(((:a, 2, int32), ("a", 3, 3)))
 
@@ -60,7 +60,7 @@ let
 end
 
 let
-    @test_throws ErrorException Kshramt.each_cons([1, 2, 3, 4], 0)
+    @test_throws AssertionError Kshramt.each_cons([1, 2, 3, 4], 0)
     @test Kshramt.each_cons([1, 2, 3, 4], 1) == [[i] for i in [1, 2, 3, 4]]
     @test Kshramt.each_cons([1, 2, :a, 4], 1) == [[i] for i in [1, 2, :a, 4]]
     @test Kshramt.each_cons([1, 2, 3, 4], 2) == [[i, j] for (i, j) in [(1, 2), (2, 3), (3, 4)]]
