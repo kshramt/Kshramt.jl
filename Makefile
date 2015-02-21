@@ -12,7 +12,7 @@ export SHELLOPTS := pipefail:errexit:nounset:noclobber
 all: test
 test:
 	cd test
-	julia run.jl
+	julia runtests.jl
 doc: doc/README.html
 
 # Rules
