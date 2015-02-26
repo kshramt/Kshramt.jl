@@ -60,11 +60,8 @@ macro |>(v, fs...)
     esc(_pipe(v, fs))
 end
 function _pipe(v, fs)
-    if length(fs) <= 0
-        v
-    else
-        f = fs[1]
-        _v = if isa(f, Expr)
+    for f in fs
+        v = if isa(f, Expr)
             @assert f.head == :call
             insert!(f.args, 2, v)
             f
@@ -73,8 +70,8 @@ function _pipe(v, fs)
         else
             error("$f::$(typeof(f)) is neither `Expr` nor `Symbol`")
         end
-        _pipe(_v, fs[2:end])
     end
+    v
 end
 
 one_others(xs) = [(xs[i], [xs[1:i-1]; xs[i+1:end]]) for i in 1:length(xs)]
