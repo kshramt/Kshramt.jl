@@ -34,7 +34,6 @@ let
 
     @test_throws AssertionError parse("1234")
     @test_throws TypeError Kshramt.make_parse_fixed_width(((:a, 2.0, i32), ("a", 3, i64)))
-    @test_throws TypeError Kshramt.make_parse_fixed_width(((:a, 2, i32), ("a", 3, 3)))
 
     parse = Kshramt.make_parse_fixed_width(((:a, 1, i32), 2, (3, 3, symbol)))
     @test parse("123456") == Dict(:a => i32(1), 3 => symbol("456"))

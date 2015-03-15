@@ -45,7 +45,7 @@ function make_parse_fixed_width(fields)
         if isa(field, Integer)
             n += field
         else
-            name, len, fn = field::(Any, Integer, Function)
+            name, len, fn = field::(Any, Integer, Any)
             n += len
             push!(_fields, :($(Meta.quot(name)) => ($fn)(s[$(n-len):$(n-1)])))
         end
