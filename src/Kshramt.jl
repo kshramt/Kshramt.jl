@@ -50,8 +50,12 @@ function make_parse_fixed_width(fields)
             push!(_fields, :($(Meta.quot(name)) => ($fn)(s[$(n-len):$(n-1)])))
         end
     end
-    ex = :((s)->(@assert length(s) >= $(n-1); Dict()))
-    append!(ex.args[2].args[2].args[2].args, _fields)
+    ex = quote
+        function parse_fixed_width(s)
+            @assert length(s) >= $(n - 1)
+            Dict($(_fields...))
+        end
+    end
     eval(ex)
 end
 
