@@ -40,6 +40,7 @@ _vtk_type(::Type{Int128}) = "INTEGER"
 
 function make_parse_fixed_width(fields)
     n = 1
+    n_max = n
     _fields = []
     for field in fields
         if isa(field, Integer)
@@ -49,10 +50,11 @@ function make_parse_fixed_width(fields)
             n += len
             push!(_fields, :($(Meta.quot(name)) => ($fn)(s[$(n-len):$(n-1)])))
         end
+        n > n_max && (n_max = n)
     end
     ex = quote
         function parse_fixed_width(s)
-            @assert length(s) >= $(n - 1)
+            @assert length(s) >= $(n_max - 1)
             Dict($(_fields...))
         end
     end
