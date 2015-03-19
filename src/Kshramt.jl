@@ -53,7 +53,7 @@ function make_parse_fixed_width(fields)
         n > n_max && (n_max = n)
     end
     ex = quote
-        function parse_fixed_width(s)
+        function(s)
             @assert length(s) >= $(n_max - 1)
             Dict($(_fields...))
         end
