@@ -1,6 +1,26 @@
 module Kshramt
 
 
+make_interpolate_hermite(xyyps) = eval(_make_interpolate_hermite(xyyps))
+function _make_interpolate_hermite(xyyps)
+    n = length(xyyps)
+    @assert length(unique([xy[1] for xy in xyyps])) == n
+    xs = [xyyp[1] for xyyp in xyyps]
+    terms = []
+    for k in 1:n
+        xk, yk, ypk = xyyps[k]
+        Lk_x = _get_Lk(k, :x, xs)
+        Lkp_xk = reduce_exs(:+, [:(1/($xk - $x)) for x in but_nth(xs, k)])
+        push!(terms, :(($yk*(1 - 2*$Lkp_xk*(x - $xk)) + $ypk*(x - $xk)).*$Lk_x.^2))
+    end
+    quote
+        function $(gensym(:interpolate_hermite))(x)
+            $(reduce_exs(:+, terms))
+        end
+    end
+end
+
+
 make_interpolate_lagrange(xys) = eval(_make_interpolate_lagrange(xys))
 function _make_interpolate_lagrange(xys)
     n = length(xys)
