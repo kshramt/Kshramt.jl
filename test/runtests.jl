@@ -4,6 +4,13 @@ unshift!(LOAD_PATH, joinpath(dirname(@__FILE__), "..", "src"))
 import Kshramt
 
 let
+    for (i, n) in enumerate((0, 1, 1, 2, 3, 5, 8, 13, 21, 34))
+        @test Kshramt.fibonacci(i - 1, Int32)::Int32 == n
+    end
+end
+
+
+let
     # `ErrorException` is thrown in a macro expansion phase.
     # Therefore, `@test_throws ErrorException Kshramt.@|>(1, 1)` does not work.
     @test_throws ErrorException eval(:(Kshramt.@|> 1 1))

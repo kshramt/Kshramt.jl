@@ -1,6 +1,13 @@
 module Kshramt
 
 
+const sqrt5 = sqrt(5)
+const λ₁ = (1 + sqrt5)/2
+const λ₂ = (1 - sqrt5)/2
+fibonacci(x::Integer) = fibonacci(x, Int)
+fibonacci{T}(x::Integer, ::Type{T}) = round(T, (λ₁^x - λ₂^x)/sqrt5)
+
+
 function dump_vtk_structured_points{T, U}(io::IO, vs::AbstractArray{T, 3}, dx::U, dy::U, dz::U, x0::U, y0::U, z0::U)
     @assert dx > zero(U)
     @assert dy > zero(U)
