@@ -1,6 +1,17 @@
 module Kshramt
 
 
+macro ltsv(vs...)
+    args = []
+    for v in vs[1:end-1]
+        append!(args, [Meta.quot(v), :(':'), v, '\t'])
+    end
+    v = vs[end]
+    append!(args, [Meta.quot(v), :(':'), v])
+    esc(:(println($(args...))))
+end
+
+
 macro print_params(params...)
     ex = quote
         $([:(println("#\tPARAMETER\t", $(Meta.quot(param)), '\t', $param)) for param in params]...)
