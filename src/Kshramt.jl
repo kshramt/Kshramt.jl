@@ -1,6 +1,51 @@
 module Kshramt
 
 
+make_interpolate_lagrange(xys) = eval(_make_interpolate_lagrange(xys))
+function _make_interpolate_lagrange(xys)
+    n = length(xys)
+    @assert length(unique([xy[1] for xy in xys])) == n
+    xs = [xy[1] for xy in xys]
+    ys = [xy[2] for xy in xys]
+    terms = []
+    for k in 1:n
+        yk = ys[k]
+        if yk != 0
+            push!(terms, :($yk*$(_get_Lk(k, :x, xs))))
+        end
+    end
+    quote
+        function $(gensym(:interpolate_lagrange))(x)
+            $(reduce_exs(:+, terms))
+        end
+    end
+end
+
+
+function _get_Lk(k, x, xs)
+    xk = xs[k]
+    xsbutkth = but_nth(xs, k)
+    :($(_get_mul_poly(:x, xsbutkth))/$(_get_mul_poly(xk, xsbutkth)))
+end
+
+
+_get_mul_poly(x, xis) = reduce_exs(:.*, [xi == 0 ? x : :($x - $xi) for xi in xis])
+
+
+function reduce_exs(op, exs)
+    n = length(exs)
+    @assert n > 0
+    if n == 1
+        exs[1]
+    elseif n == 2
+        :($op($(exs...)))
+    else
+        m = n >> 1
+        :($op($(reduce_exs(op, exs[1:m])), $(reduce_exs(op, exs[m+1:end]))))
+    end
+end
+
+
 const sqrt5 = sqrt(5)
 const λ₁ = (1 + sqrt5)/2
 const λ₂ = (1 - sqrt5)/2

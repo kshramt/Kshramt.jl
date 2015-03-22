@@ -1,7 +1,15 @@
-import Base.Test: @test, @test_throws
+import Base.Test: @test, @test_throws, @test_approx_eq
 
 unshift!(LOAD_PATH, joinpath(dirname(@__FILE__), "..", "src"))
 import Kshramt
+
+
+let
+    interpolate_lagrange = Kshramt.make_interpolate_lagrange(((-1, 1), (0, 0), (1, 1)))
+    xs = -2:0.1:2
+    @test_approx_eq interpolate_lagrange(xs) xs.^2
+end
+
 
 let
     for (i, n) in enumerate((0, 1, 1, 2, 3, 5, 8, 13, 21, 34))
