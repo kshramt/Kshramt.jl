@@ -8,14 +8,8 @@ export SHELL := /bin/bash
 export SHELLOPTS := pipefail:errexit:nounset:noclobber
 
 # Tasks
-.PHONY: all test doc
-all: test
-test:
+.PHONY: all check
+all:
+check:
 	cd test
 	julia runtests.jl
-doc: doc/README.html
-
-# Rules
-
-doc/%.html: %.adoc
-	asciidoctor --destination-dir $(@D) $<

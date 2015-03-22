@@ -11,8 +11,8 @@ end
 make_interpolate_hermite(xyyps) = eval(_make_interpolate_hermite(xyyps))
 function _make_interpolate_hermite(xyyps)
     n = length(xyyps)
-    @assert length(unique([xy[1] for xy in xyyps])) == n
     xs = [xyyp[1] for xyyp in xyyps]
+    @assert length(unique(xs)) == n
     terms = []
     for k in 1:n
         xk, yk, ypk = xyyps[k]
