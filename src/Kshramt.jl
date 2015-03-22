@@ -45,7 +45,8 @@ _vtk_type(::Type{Int64}) = "INTEGER"
 _vtk_type(::Type{Int128}) = "INTEGER"
 
 
-function make_parse_fixed_width(fields)
+make_parse_fixed_width(fields) = eval(_make_parse_fixed_width(fields))
+function _make_parse_fixed_width(fields)
     n = 1
     n_max = n
     _fields = []
@@ -59,13 +60,12 @@ function make_parse_fixed_width(fields)
         end
         n > n_max && (n_max = n)
     end
-    ex = quote
-        function(s)
+    quote
+        function $(gensym(:parse_fixed_width))(s)
             @assert length(s) >= $(n_max - 1)
             Dict($(_fields...))
         end
     end
-    eval(ex)
 end
 
 
