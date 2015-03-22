@@ -1,6 +1,13 @@
 module Kshramt
 
 
+macro print_params(params...)
+    quote
+        $([:(println("#\tPARAMETER\t", $(Meta.quot(param)), '\t', $param)) for param in params]...)
+    end
+end
+
+
 make_interpolate_hermite(xyyps) = eval(_make_interpolate_hermite(xyyps))
 function _make_interpolate_hermite(xyyps)
     n = length(xyyps)
