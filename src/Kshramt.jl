@@ -87,7 +87,13 @@ function _pipe(v, fs)
     v
 end
 
-one_others(xs) = [(xs[i], [xs[1:i-1]; xs[i+1:end]]) for i in 1:length(xs)]
+one_others(xs) = [(xs[i], but_nth(xs, i)) for i in 1:length(xs)]
+
+
+function but_nth(xs, n)
+    [xs[1:n-1]; xs[n+1:end]]
+end
+
 
 count_by(f, xs) = [k => length(vs) for (k, vs) in group_by(f, xs)]
 
