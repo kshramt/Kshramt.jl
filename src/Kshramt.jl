@@ -2,9 +2,10 @@ module Kshramt
 
 
 macro print_params(params...)
-    quote
+    ex = quote
         $([:(println("#\tPARAMETER\t", $(Meta.quot(param)), '\t', $param)) for param in params]...)
     end
+    esc(ex)
 end
 
 
