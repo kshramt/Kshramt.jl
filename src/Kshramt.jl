@@ -12,14 +12,6 @@ macro ltsv(vs...)
 end
 
 
-macro print_params(params...)
-    ex = quote
-        $([:(println("#\tPARAMETER\t", $(Meta.quot(param)), '\t', $param)) for param in params]...)
-    end
-    esc(ex)
-end
-
-
 make_interpolate_hermite(xyyps) = eval(_make_interpolate_hermite(xyyps))
 function _make_interpolate_hermite(xyyps)
     n = length(xyyps)
