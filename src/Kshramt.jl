@@ -12,6 +12,7 @@ type LineSearchState{T}
     fr::T
 end
 LineSearchState{T}(::Type{T}) = LineSearchState(false, -1, T(0), T(1), T(1), convert(T, Inf), convert(T, Inf), convert(T, Inf))
+LineSearchState() = LineSearchState(Float64)
 
 
 @doc """
