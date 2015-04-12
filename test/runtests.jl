@@ -25,17 +25,17 @@ end
 
 let
     s = Kshramt.LineSearchState(Float64)
-    for x0 in (10, -20)
+    for x0 in (10, -20, 0.75, 100)
         f_best = Inf
         x_best = Inf
         x = Inf
         Kshramt.init(s)
         while true
             x = s.x
-            f = 1 - 1/(1 + (x - x0)^2) - 0.01*x0
-            # println(s.iter, '\t', x, '\t', s.xl, '\t', s.xr, '\t', f, '\t', s.fl, '\t', s.fr)
+            f = 1 - 1/(1 + (x - x0)^2)
+            println(s.iter, '\t', x, '\t', s.xl, '\t', s.xr, '\t', f, '\t', s.fl, '\t', s.fr)
             Kshramt.update(s, f)
-            converge = abs(f_best - f) < 1e-3 && s.iter > 4
+            converge = abs(f_best - f) < 1e-3 && s.iter > 4 && s.is_quadrantic
             if f < f_best
                 f_best = f
                 x_best = x

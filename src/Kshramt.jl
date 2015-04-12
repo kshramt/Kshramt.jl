@@ -2,6 +2,7 @@ module Kshramt
 
 
 type LineSearchState{T}
+    is_quadrantic::Bool
     iter::Int
     xl::T
     x::T
@@ -10,7 +11,7 @@ type LineSearchState{T}
     f::T
     fr::T
 end
-LineSearchState{T}(::Type{T}) = LineSearchState(-1, T(0), T(1), T(1), convert(T, Inf), convert(T, Inf), convert(T, Inf))
+LineSearchState{T}(::Type{T}) = LineSearchState(false, -1, T(0), T(1), T(1), convert(T, Inf), convert(T, Inf), convert(T, Inf))
 
 
 @doc """
@@ -44,6 +45,7 @@ end
 
 
 function init(s::LineSearchState)
+    s.is_quadrantic = false
     s.iter = 0
     s.xl = 0
     s.xr = 1
@@ -76,9 +78,9 @@ function update{T}(s::LineSearchState{T}, f::T, enlarge::T=T(11//10))
     x1, x2 ,x3 = xs[inds]
     f1, f2, f3 = [s.fl, f, s.fr][inds]
 
-    x_new, is_quadrantic = line_search_quadratic(x1, x2, x3, f1, f2, f3)
+    x_new, s.is_quadrantic = line_search_quadratic(x1, x2, x3, f1, f2, f3)
     step = enlarge*(x3 - x1)
-    if is_quadrantic
+    if s.is_quadrantic
         if x_new < x1
             _update(s, x1, x2, f1, f2, max(x_new, x1 - step))
         elseif x_new == x1
