@@ -35,7 +35,7 @@ let
             f = 1 - 1/(1 + (x - x0)^2)
             println(s.iter, '\t', x, '\t', s.xl, '\t', s.xr, '\t', f, '\t', s.fl, '\t', s.fr)
             Kshramt.update(s, f)
-            converge = abs(f_best - f) < 1e-3 && s.iter > 4 && s.is_quadrantic
+            converge = abs(f_best - f) < 1e-6 && abs(s.x - x_best) < 1e-3 && s.iter > 4 && s.is_quadrantic
             if f < f_best
                 f_best = f
                 x_best = x
