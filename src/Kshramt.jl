@@ -16,8 +16,8 @@ LineSearchState{T}(::Type{T}) = LineSearchState(false, -1, T(0), T(1), T(1), con
 
 @doc """
   x
-
-y   z
+ / \
+y---z
 0   1
 """ ->
 function ternary_diagram{S, T, U}(x::S, y::T, z::U)
