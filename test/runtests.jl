@@ -5,6 +5,25 @@ import Kshramt
 
 
 let
+    x, y = Kshramt.ternary_diagram(1, 0, 0)
+    @test_approx_eq x 0.5
+    @test_approx_eq y √3/2
+    x, y = Kshramt.ternary_diagram(0, 1, 0)
+    @test_approx_eq x 0
+    @test_approx_eq y 0
+    x, y = Kshramt.ternary_diagram(0, 0, 1)
+    @test_approx_eq x 1
+    @test_approx_eq y 0
+    x, y = Kshramt.ternary_diagram(1, 1, 1)
+    @test_approx_eq x 0.5
+    @test_approx_eq y √3/2/3
+    x, y = Kshramt.ternary_diagram(0, 1, 1)
+    @test_approx_eq x 0.5
+    @test_approx_eq y 0
+end
+
+
+let
     interpolate_lagrange = Kshramt.make_interpolate_lagrange(((-1, 1), (0, 0), (1, 1)))
     xs = -2:0.1:2
     @test_approx_eq interpolate_lagrange(xs) xs.^2

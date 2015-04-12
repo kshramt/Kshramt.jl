@@ -1,6 +1,27 @@
 module Kshramt
 
 
+
+
+@doc """
+  x
+
+y   z
+0   1
+""" ->
+function ternary_diagram{S, T, U}(x::S, y::T, z::U)
+    @assert x >= 0
+    @assert y >= 0
+    @assert z >= 0
+    total = x + y + z
+    ax = x/total
+    (z/total + ax/2, √3*ax/2)
+end
+ternary_diagram{S, T, U}(xs::Array{S}, ys::Array{T}, zs::Array{U}) = map(ternary_diagram, xs, ys, zs)
+ternary_diagram{S, T, U}(xyz::(S, T, U)) = ternary_diagram(xyz...)
+ternary_diagram{S, T, U}(xyzs::Array{(S, T, U)}) = map(ternary_diagram, xyzs)
+
+
 macro ltsv(vs...)
     args = []
     for v in vs[1:end-1]
