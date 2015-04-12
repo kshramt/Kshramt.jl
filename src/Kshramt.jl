@@ -1,6 +1,16 @@
 module Kshramt
 
 
+type LineSearchState{T}
+    iter::Int
+    xl::T
+    x::T
+    xr::T
+    fl::T
+    f::T
+    fr::T
+end
+LineSearchState{T}(::Type{T}) = LineSearchState(-1, T(0), T(1), T(1), convert(T, Inf), convert(T, Inf), convert(T, Inf))
 
 
 @doc """
@@ -30,6 +40,108 @@ macro ltsv(vs...)
     v = vs[end]
     append!(args, [Meta.quot(v), :(':'), v])
     esc(:(println($(args...))))
+end
+
+
+function init(s::LineSearchState)
+    s.iter = 0
+    s.xl = 0
+    s.xr = 1
+    s.x = s.xl
+end
+
+
+function update{T}(s::LineSearchState{T}, f::T, enlarge::T=T(11//10))
+    s.iter < 0 && throw("$s should be `init`ialized before `update`d")
+    s.iter += 1
+    if s.iter == 1
+        s.xl = s.x
+        s.fl = f
+        s.x = s.xl + 1
+        return
+    elseif s.iter == 2
+        @assert s.x > s.xl
+        s.xr = s.x
+        s.fr = f
+        step = enlarge*(s.xr - s.xl)
+        s.x = s.fr < s.fl ? s.xr + step : s.xl - step
+        return
+    elseif s.x == s.xl || s.x == s.xr
+        step = enlarge*(s.xr - s.xl)
+        s.x = s.fl < s.fr ? s.xl - step : s.xr + step
+        return
+    end
+    xs = [s.xl, s.x, s.xr]
+    inds = sortperm(xs)
+    x1, x2 ,x3 = xs[inds]
+    f1, f2, f3 = [s.fl, f, s.fr][inds]
+
+    x_new, is_quadrantic = line_search_quadratic(x1, x2, x3, f1, f2, f3)
+    step = enlarge*(x3 - x1)
+    if is_quadrantic
+        if x_new < x1
+            _update(s, x1, x2, f1, f2, max(x_new, x1 - step))
+        elseif x_new == x1
+            _update(s, x1, x2, f1, f2, x1 - step)
+        elseif x3 < x_new
+            _update(s, x2, x3, f2, f3, min(x_new, x3 + step))
+        elseif x3 == x_new
+            _update(s, x2, x3, f2, f3, x3 + step)
+        elseif x2 == x_new
+            if f1 < f3
+                _update(s, x1, x2, f1, f2, (x1/2) + (x2/2))
+            else
+                _update(s, x2, x3, f2, f3, (x2/2) + (x3/2))
+            end
+        else
+            if f1 < f3
+                _update(s, x1, x2, f1, f2, x_new)
+            else
+                _update(s, x2, x3, f2, f3, x_new)
+            end
+        end
+    else
+        if x_new < x2
+            _update(s, x1, x2, f1, f2, x1 - step)
+        else
+            _update(s, x2, x3, f2, f3, x3 + step)
+        end
+    end
+end
+
+
+function _update{T}(s::LineSearchState{T}, xl::T, xr::T, fl::T, fr::T, x::T)
+    s.xl = xl
+    s.xr = xr
+    s.fl = fl
+    s.fr = fr
+    s.x = x
+end
+
+
+function line_search_quadratic(x1, x2, x3, f1, f2, f3)
+    x12 = x1 - x2
+    x13 = x1 - x3
+    x23 = x2 - x3
+    f1x1213 = f1/(x12*x13)
+    f2x1223 = f2/(x12*x23)
+    f3x1323 = f3/(x13*x23)
+    a = f1x1213 - f2x1223 + f3x1323
+    is_quadrantic = a > 0
+    if is_quadrantic
+        neg_b = f1x1213*(x2 + x3) - f2x1223*(x1 + x3) + f3x1323*(x1 + x2)
+        neg_b/2a
+    elseif f1 < f2
+        if f1 < f3
+            x1
+        else
+            x3
+        end
+    elseif f2 < f3
+        x2
+    else
+        x3
+    end, is_quadrantic
 end
 
 

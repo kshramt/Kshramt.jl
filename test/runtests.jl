@@ -1,4 +1,4 @@
-import Base.Test: @test, @test_throws, @test_approx_eq
+import Base.Test: @test, @test_throws, @test_approx_eq, @test_approx_eq_eps
 
 unshift!(LOAD_PATH, joinpath(dirname(@__FILE__), "..", "src"))
 import Kshramt
@@ -20,6 +20,49 @@ let
     x, y = Kshramt.ternary_diagram(0, 1, 1)
     @test_approx_eq x 0.5
     @test_approx_eq y 0
+end
+
+
+let
+    s = Kshramt.LineSearchState(Float64)
+    for x0 in (10, -20)
+        f_best = Inf
+        x_best = Inf
+        x = Inf
+        Kshramt.init(s)
+        while true
+            x = s.x
+            f = 1 - 1/(1 + (x - x0)^2) - 0.01*x0
+            # println(s.iter, '\t', x, '\t', s.xl, '\t', s.xr, '\t', f, '\t', s.fl, '\t', s.fr)
+            Kshramt.update(s, f)
+            converge = abs(f_best - f) < 1e-3 && s.iter > 4
+            if f < f_best
+                f_best = f
+                x_best = x
+            end
+            converge && break
+        end
+        @test_approx_eq_eps x x0 1e-2
+    end
+end
+
+
+let
+    let
+        x, is_quadrantic = Kshramt.line_search_quadratic(-2, 1, 2, 4, 1, 4)
+        @test is_quadrantic
+        @test_approx_eq x 0
+    end
+    let
+        x, is_quadrantic = Kshramt.line_search_quadratic(-2, 1, 3, -4, -1, -9)
+        @test !is_quadrantic
+        @test_approx_eq x 3
+    end
+    let
+        x, is_quadrantic = Kshramt.line_search_quadratic(-1, 0, 2, -1, 0, 2)
+        @test !is_quadrantic
+        @test_approx_eq x -1
+    end
 end
 
 
