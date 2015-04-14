@@ -93,27 +93,27 @@ end
 
 
 let
-    i32(s::AbstractString) = parseint(Int32, s)
+    i32(s::AbstractString) = parse(Int32, s)
     i32(x::Number) = Int32(x)
-    i64(s::AbstractString) = parseint(Int64, s)
+    i64(s::AbstractString) = parse(Int64, s)
     i64(x::Number) = Int64(x)
-    parse = Kshramt.make_parse_fixed_width(((:a, 2, i32), ("a", 3, i64)))
-    d = parse("12345")
+    parse_fixed_width = Kshramt.make_parse_fixed_width(((:a, 2, i32), ("a", 3, i64)))
+    d = parse_fixed_width("12345")
     @test d[:a] == 12
     @test typeof(d[:a]) == Int32
     @test d["a"] == 345
     @test typeof(d["a"]) == Int64
-    d = parse("123456")
+    d = parse_fixed_width("123456")
     @test d[:a] == 12
     @test typeof(d[:a]) == Int32
     @test d["a"] == 345
     @test typeof(d["a"]) == Int64
 
-    @test_throws AssertionError parse("1234")
+    @test_throws AssertionError parse_fixed_width("1234")
     @test_throws TypeError Kshramt.make_parse_fixed_width(((:a, 2.0, i32), ("a", 3, i64)))
 
-    parse = Kshramt.make_parse_fixed_width(((:a, 1, i32), 2, (3, 3, symbol)))
-    @test parse("123456") == Dict(:a => i32(1), 3 => symbol("456"))
+    parse_fixed_width = Kshramt.make_parse_fixed_width(((:a, 1, i32), 2, (3, 3, symbol)))
+    @test parse_fixed_width("123456") == Dict(:a => i32(1), 3 => symbol("456"))
 end
 
 
