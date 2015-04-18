@@ -139,6 +139,23 @@ let
                                                            )
 end
 
+
+let
+    @test Kshramt.partition([], 2) == []
+    @test Kshramt.partition([1], 2) == []
+    expected = []
+    push!(expected, [1, 2])
+    @test Kshramt.partition([1, 2], 2) == expected
+    expected = []
+    push!(expected, [1, 2])
+    @test Kshramt.partition([1, 2, 3], 2) == expected
+    expected = []
+    push!(expected, [1, 2])
+    push!(expected, [3, 4])
+    @test Kshramt.partition([1, 2, 3, 4], 2) == expected
+end
+
+
 let
     @test_throws AssertionError Kshramt.each_cons([1, 2, 3, 4], 0)
     @test Kshramt.each_cons([1, 2, 3, 4], 1) == [[i] for i in [1, 2, 3, 4]]
