@@ -298,7 +298,8 @@ function _pipe(v, fs)
     v
 end
 
-one_others(xs) = [(xs[i], but_nth(xs, i)) for i in 1:length(xs)]
+
+one_others(xs) = [(xs[i], but_nth(xs, i)) for i in eachindex(xs)]
 
 
 function but_nth(xs, n)
