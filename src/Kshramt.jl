@@ -29,8 +29,8 @@ function ternary_diagram{S, T, U}(x::S, y::T, z::U)
     (z/total + ax/2, √3*ax/2)
 end
 ternary_diagram{S, T, U}(xs::Array{S}, ys::Array{T}, zs::Array{U}) = map(ternary_diagram, xs, ys, zs)
-ternary_diagram{S, T, U}(xyz::(S, T, U)) = ternary_diagram(xyz...)
-ternary_diagram{S, T, U}(xyzs::Array{(S, T, U)}) = map(ternary_diagram, xyzs)
+ternary_diagram{S, T, U}(xyz::Tuple{S, T, U}) = ternary_diagram(xyz...)
+ternary_diagram{S, T, U}(xyzs::Array{Tuple{S, T, U}}) = map(ternary_diagram, xyzs)
 
 
 macro ltsv(vs...)
@@ -265,7 +265,7 @@ function _make_parse_fixed_width(fields)
         if isa(field, Integer)
             n += field
         else
-            name, len, fn = field::(Any, Integer, Any)
+            name, len, fn = field::Tuple{Any, Integer, Any}
             n += len
             push!(_fields, :($(Meta.quot(name)) => ($fn)(s[$(n-len):$(n-1)])))
         end
