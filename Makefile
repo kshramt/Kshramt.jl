@@ -11,8 +11,8 @@ export SHELLOPTS := pipefail:errexit:nounset:noclobber
 JULIA := julia
 
 
-sha256 = $(1:%=%.sha256)
-unsha256 = $(1:%.sha256=%)
+box = $(1:%=%.sha256)
+unbox = $(1:%.sha256=%)
 
 
 # Tasks
@@ -29,9 +29,9 @@ check: test/runtests.jl.tested
 	cmp -s $< $@ || cat $< >| $@
 
 
-test/runtests.jl.tested: $(call sha256,src/Kshramt.jl)
+test/runtests.jl.tested: $(call box,src/Kshramt.jl)
 
 
 %.tested: %.sha256
-	$(JULIA) $(call unsha256,$<)
+	$(JULIA) $(call unbox,$<)
 	touch $@
