@@ -1,6 +1,5 @@
 module Kshramt
 
-
 type LineSearchState{T}
     is_quadrantic::Bool
     iter::Int
@@ -12,6 +11,58 @@ type LineSearchState{T}
 end
 LineSearchState{T}(::Type{T}) = LineSearchState(false, -1, T(0), T(1), T(1), convert(T, Inf), convert(T, Inf))
 LineSearchState() = LineSearchState(Float64)
+
+
+make_poly_legendre(i) = eval(_make_poly_legendre(i))
+function _make_poly_legendre(i)
+    @assert i >= 0
+    quote
+        function $(symbol("poly_legendre_$i"))(x)
+            $(__make_poly_legendre(i))
+        end
+    end
+end
+
+
+function __make_poly_legendre(i)
+    if i == 0
+        1
+    elseif i == 1
+        :x
+    else
+        :(($((2*i + 1)/(i + 1))*x.*$(__make_poly_legendre(i - 1)) - $(i/(i + 1))*$(__make_poly_legendre(i - 2))))
+    end
+end
+
+
+function _make_interpolate_hermite(xyyps)
+    n = length(xyyps)
+    xs = [xyyp[1] for xyyp in xyyps]
+    @assert length(unique(xs)) == n
+    terms = []
+    for k in 1:n
+        xk, yk, ypk = xyyps[k]
+        Lk_x = _get_Lk(k, :x, xs)
+        Lkp_xk = reduce_exs(:+, [:(1/($xk - $x)) for x in but_nth(xs, k)])
+        push!(terms, :(($yk*(1 - 2*$Lkp_xk*(x - $xk)) + $ypk*(x - $xk)).*$Lk_x.^2))
+    end
+    quote
+        function $(gensym(:interpolate_hermite))(x)
+            $(reduce_exs(:+, terms))
+        end
+    end
+end
+
+
+function poly_legendre(i, x)
+    if i == 0
+        1
+    elseif i == 1
+        x
+    else
+        ((2*i + 1).*x.*poly_legendre(i - 1, x) - i*poly_legendre(i - 2, x))/(i + 1)
+    end
+end
 
 
 @doc """
