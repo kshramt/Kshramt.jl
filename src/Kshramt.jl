@@ -47,7 +47,7 @@ function _make_interpolate_hermite(xyyps)
         push!(terms, :(($yk*(1 - 2*$Lkp_xk*(x - $xk)) + $ypk*(x - $xk)).*$Lk_x.^2))
     end
     quote
-        function $(gensym(:interpolate_hermite))(x)
+        function $(gensym(:interpolate_hermite)){T}(x::T)
             $(reduce_exs(:+, terms))
         end
     end
@@ -211,7 +211,7 @@ function _make_interpolate_hermite(xyyps)
         push!(terms, :(($yk*(1 - 2*$Lkp_xk*(x - $xk)) + $ypk*(x - $xk)).*$Lk_x.^2))
     end
     quote
-        function $(gensym(:interpolate_hermite))(x)
+        function $(gensym(:interpolate_hermite)){T}(x::T)
             $(reduce_exs(:+, terms))
         end
     end
@@ -232,7 +232,7 @@ function _make_interpolate_lagrange(xys)
         end
     end
     quote
-        function $(gensym(:interpolate_lagrange))(x)
+        function $(gensym(:interpolate_lagrange)){T}(x::T)
             $(reduce_exs(:+, terms))
         end
     end
@@ -323,7 +323,7 @@ function _make_parse_fixed_width(fields)
         n > n_max && (n_max = n)
     end
     quote
-        function $(gensym(:parse_fixed_width))(s)
+        function $(gensym(:parse_fixed_width)){T}(s::T)
             @assert length(s) >= $(n_max - 1)
             Dict($(_fields...))
         end
