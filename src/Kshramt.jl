@@ -44,8 +44,8 @@ end
 doc"""
 # Return
 
-$log((x)_{n})$, where $(x)_{n}$ is a Pochhammer symbol.
-Pochhammer symbol is defined as $(x)_{0} = 1$ and $(a)_{n} = \Pi_{i = 0}^{n - 1} (a + i)$ for $n \ge 1$.
+$log((x)_{n})$, where $(x)_{n}$ is the Pochhammer symbol.
+The Pochhammer symbol is defined as $(x)_{0} = 1$ and $(a)_{n} = \Pi_{i = 0}^{n - 1} (a + i)$ for $n \ge 1$.
 """
 function log_pochhammer(x, n)
     ret = log(one(x + 0))
