@@ -16,6 +16,45 @@ LineSearchState{T}(::Type{T}) = LineSearchState(false, -1, T(0), T(1), T(1), con
 LineSearchState() = LineSearchState(Float64)
 
 
+function make_hypergeometric(as, bs, n)
+    coeffs = [exp(log_hypergeometric_coeff(i, as, bs)) for i in 0:n]
+    function hypergeometric_as_bs_n(z)
+        sum(coeffs[i + 1]*z^i for i in 0:n)
+    end
+end
+
+
+function hypergeometric(z, as, bs, n)
+    sum(hypergeometric_term(i, z, as, bs) for i in 0:n)
+end
+
+
+function hypergeometric_term(i, z, as, bs)
+    exp(log_hypergeometric_coeff(i, as, bs))*z^i
+end
+
+
+function log_hypergeometric_coeff(i, as, bs)
+    sum(log_pochhammer(a, i) for a in as) - sum(log_pochhammer(b, i) for b in bs) - lgamma(i + 1)
+end
+
+
+doc"""
+# Return
+
+$log((x)_{n})$, where $(x)_{n}$ is a Pochhammer symbol.
+Pochhammer symbol is defined as $(x)_{0} = 1$ and $(a)_{n} = \Pi_{i = 0}^{n - 1} (a + i)$ for $n \ge 1$.
+"""
+function log_pochhammer(x, n)
+    ret = log(one(x + 0))
+    # todo: use pairwise sum
+    for i in 0:(n - 1)
+        ret += log(x + i)
+    end
+    ret
+end
+
+
 make_poly_legendre(i) = eval(_make_poly_legendre(i))
 function _make_poly_legendre(i)
     @assert i >= 0
