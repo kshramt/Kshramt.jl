@@ -5,6 +5,29 @@ import Kshramt
 
 
 let
+    for n in (5, 10, 20)
+        for as in ((1.1, 2.1), (2.1, -1.1, 3.1), (4.1, 5.1, 1.1))
+            for bs in ((2.1, -1.1, 9.1), (2.1, 1.1, -4.1), (-3.1, 1.1, 6.1))
+                pFq = Kshramt.make_hypergeometric(as, bs, n)
+                for z in linspace(0, 10, 3)
+                    @test isapprox(pFq(z), Kshramt.hypergeometric(z, as, bs, n))
+                end
+            end
+        end
+    end
+
+    # answers were calculated by Mathematica
+    @test isapprox(Kshramt.hypergeometric(1.2, (1, 2), (3, 4), 200), 1.242702454583677041404674647790601574469)
+    @test isapprox(Kshramt.hypergeometric(1, (1, 2), (3, 4), 200), 1.195443875944303913996656474758832082612)
+
+    @test isapprox(Kshramt.hypergeometric(1.2, (1, 2, -3), (3, 4), 200), 0.58144)
+    @test isapprox(Kshramt.hypergeometric(1, (1, 2, -3), (3, 4), 200), 0.63)
+
+    @test isapprox(Kshramt.hypergeometric(3.2, (4.1, 5.1, 1.1), (2.1, -1.1, 9.1), 200), 2970.269822293060585271947973159405939363)
+end
+
+
+let
     x, y = Kshramt.ternary_diagram(1, 0, 0)
     @test_approx_eq x 0.5
     @test_approx_eq y √3/2

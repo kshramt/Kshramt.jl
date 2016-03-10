@@ -17,6 +17,8 @@ LineSearchState() = LineSearchState(Float64)
 
 
 function make_hypergeometric(as, bs, n)
+    as = map(complex, as)
+    bs = map(complex, bs)
     coeffs = [exp(log_hypergeometric_coeff(i, as, bs)) for i in 0:n]
     function hypergeometric_as_bs_n(z)
         sum(coeffs[i + 1]*z^i for i in 0:n)
@@ -25,7 +27,7 @@ end
 
 
 function hypergeometric(z, as, bs, n)
-    sum(hypergeometric_term(i, z, as, bs) for i in 0:n)
+    sum(hypergeometric_term(i, z, map(complex, as), map(complex, bs)) for i in 0:n)
 end
 
 
