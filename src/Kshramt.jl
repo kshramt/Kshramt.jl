@@ -38,25 +38,6 @@ function __make_poly_legendre(i)
 end
 
 
-function _make_interpolate_hermite(xyyps)
-    n = length(xyyps)
-    xs = [xyyp[1] for xyyp in xyyps]
-    @assert length(unique(xs)) == n
-    terms = []
-    for k in 1:n
-        xk, yk, ypk = xyyps[k]
-        Lk_x = _get_Lk(k, :x, xs)
-        Lkp_xk = reduce_exs(:+, [:(1/($xk - $x)) for x in but_nth(xs, k)])
-        push!(terms, :(($yk*(1 - 2*$Lkp_xk*(x - $xk)) + $ypk*(x - $xk)).*$Lk_x.^2))
-    end
-    quote
-        function $(gensym(:interpolate_hermite)){T}(x::T)
-            $(reduce_exs(:+, terms))
-        end
-    end
-end
-
-
 function poly_legendre(i, x)
     if i == 0
         1
